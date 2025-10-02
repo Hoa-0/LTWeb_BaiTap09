@@ -1,10 +1,11 @@
+// File: vn.iotstar.controller.AppController.java
 package vn.iotstar.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import vn.iotstar.service.ProductService;
+import vn.iotstar.service.ProductService; // Cần dùng để lấy danh sách sản phẩm
 
 @Controller
 public class AppController {
@@ -12,22 +13,35 @@ public class AppController {
     @Autowired
     private ProductService productService;
 
-    // Trang chủ: hiển thị danh sách sản phẩm
-    @GetMapping({ "/", "/index" })
+    /**
+     * Đường dẫn / hoặc /index (Trang chủ)
+     * Quyền truy cập: CÔNG KHAI (permitAll())
+     * Trả về file: index.html
+     */
+    @GetMapping({"/", "/index"})
     public String index(Model model) {
+        // Lấy danh sách sản phẩm để hiển thị trên trang chủ
         model.addAttribute("products", productService.findAll());
-        return "index"; // index.jsp
+        return "index"; 
     }
-
-    // Trang login
+    
+    /**
+     * Đường dẫn /login (Trang đăng nhập tùy chỉnh)
+     * Quyền truy cập: CÔNG KHAI (permitAll())
+     * Trả về file: login.html
+     */
     @GetMapping("/login")
     public String login() {
-        return "login"; // login.jsp
+        return "login"; 
     }
 
-    // Trang 403 (Access Denied)
+    /**
+     * Đường dẫn /403 (Trang lỗi cấm truy cập)
+     * Quyền truy cập: CÔNG KHAI (permitAll())
+     * Trả về file: 403.html
+     */
     @GetMapping("/403")
     public String accessDenied() {
-        return "403"; // 403.jsp
+        return "403"; 
     }
 }

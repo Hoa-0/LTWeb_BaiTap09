@@ -1,3 +1,4 @@
+// File: vn.iotstar.controller.ProductController.java
 package vn.iotstar.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,35 +18,47 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    // 1. Form thêm sản phẩm (ROLE_ADMIN)
+    // --- 1. Thêm sản phẩm (GET: Mở Form) ---
+    // URL: /products/new
+    // Cần ROLE_ADMIN (Đã cấu hình trong SecurityConfig)
     @GetMapping("/new")
     public String newProductForm(Model model) {
+        // Gửi một đối tượng Product rỗng để form có thể liên kết (binding)
         model.addAttribute("product", new Product());
-        return "new_product"; // new_product.jsp
+        return "new_product"; 
     }
-
-    // 2. Lưu sản phẩm mới
+    
+    // --- 2. Lưu sản phẩm (POST: Xử lý Form) ---
+    // URL: /products/save
+    // Cần ROLE_ADMIN
     @PostMapping("/save")
     public String saveProduct(@ModelAttribute("product") Product product,
-            RedirectAttributes ra) {
+                              RedirectAttributes ra) {
+        
         productService.save(product);
         ra.addFlashAttribute("message", "Lưu sản phẩm thành công!");
-        return "redirect:/index";
+        return "redirect:/"; // Quay về trang chủ
     }
 
-    // 3. Form sửa sản phẩm (ROLE_ADMIN)
+    // --- 3. Sửa sản phẩm (GET: Mở Form) ---
+    // URL: /products/edit/{id}
+    // Cần ROLE_ADMIN
     @GetMapping("/edit/{id}")
     public String editProductForm(@PathVariable("id") Long id, Model model) {
         Optional<Product> optionalProduct = productService.findById(id);
+
         if (optionalProduct.isPresent()) {
             model.addAttribute("product", optionalProduct.get());
-            return "edit_product"; // edit_product.jsp
+            return "edit_product"; 
         } else {
-            return "redirect:/index";
+            // Nếu không tìm thấy sản phẩm, chuyển về trang chủ
+            return "redirect:/"; 
         }
     }
 
-    // 4. Xóa sản phẩm (ROLE_ADMIN)
+    // --- 4. Xóa sản phẩm (GET/POST: Xử lý Xóa) ---
+    // URL: /products/delete/{id}
+    // Cần ROLE_ADMIN
     @GetMapping("/delete/{id}")
     public String deleteProduct(@PathVariable("id") Long id, RedirectAttributes ra) {
         try {
@@ -54,6 +67,6 @@ public class ProductController {
         } catch (Exception e) {
             ra.addFlashAttribute("error", "Không thể xóa sản phẩm này.");
         }
-        return "redirect:/index";
+        return "redirect:/";
     }
 }
